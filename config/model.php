@@ -21,10 +21,10 @@ class Model
      * передаємо константам атрибути з'єднання з БД
      */
     
-    const HOST='localhost'; /*хостинг*/
-    const NAME='root'; /*ім'я користувача БД*/
-    const PASSWORD='';/*пароль користувача БД*/
-    const DB='gbook';/*ім'я БД*/
+    const HOST = 'localhost'; /*хостинг*/
+    const NAME = 'root'; /*ім'я користувача БД*/
+    const PASSWORD = '';/*пароль користувача БД*/
+    const DB = 'gbook';/*ім'я БД*/
     
     /*
      * змінній  string $_query у класах наслідниках будемо присвоювати запит до БД
@@ -34,7 +34,7 @@ class Model
         
     public function __construct()
     {
-        $this->_db=mysqli_connect(self::HOST,  self::NAME,  self::PASSWORD,  self::DB);
+        $this -> _db = mysqli_connect( self::HOST,  self::NAME,  self::PASSWORD,  self::DB );
     }
     
     public function actionIndex()
@@ -44,7 +44,7 @@ class Model
     
     public function __destruct()
     {
-        mysqli_close($this->_db);
+        mysqli_close( $this->_db );
     }
     
 }
