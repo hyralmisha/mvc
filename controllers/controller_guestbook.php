@@ -3,188 +3,166 @@
 class Controller_guestbook extends Controller
 
 {
-    
-    function add()
+    public function __construct()
     {
-       /**
-        * записує до БД новий запис
-        * 
-        * @param sting $name назва запису
-        * @param sting $msgShort опис запису
-        * @param sting $msgFull текст запису
-        *
-        * @param $dateCreate, $dateEdit --- час і дата створення і редагування 
-        * запису (поточні час і дата)
-        */
-        
-        /*
-         * створюємо об'єкт класу Model_add
-         *          клас Model_add() описаний у файлі "models/model_add.php"
-         */
-        $this->model = new Model_guestbook();
-        
-        /*
-         * перевіряємо чи був використаний для запиту сторынки метод POST
-         *      --якщо так, то перевыряэмо чи у всы поля форми введені 
-         *        непорожні дані
-         *          --якщо так, то екранізуємо введені дані
-         *          --інакше, виводиться повідомлення про помилку
-         */
-        if ($_SERVER['REQUEST_METHOD']=='POST'){
-            if (isset($_POST['name'])&&!empty($_POST['name'])&&
-                isset($_POST['msgShort'])&&!empty($_POST['msgShort'])&&
-                isset($_POST['msgFull'])&&!empty($_POST['msgFull'])){
-                    $name=stripslashes(trim(htmlspecialchars($_POST['name'])));
-                    $msgShort=stripslashes(trim(htmlspecialchars($_POST['msgShort'])));
-                    $msgFull=stripslashes(trim(htmlspecialchars($_POST['msgFull'])));
-            
-                    /*
-                     * викликаємо метод actionIndex() класу Model_add 
-                     * і передаємо йому введені у форму дані, для збереження 
-                     * до БД
-                     */
-                    $this->model->add($name,$msgShort,$msgFull);
-                    
-                    $this->main();
+        //перегружаєм конструктор з батьківского класу
+        parent :: __construct();
+        // створюємо об'єкт класу Model_guestbook
+        $this -> model = new Model_guestbook();
+    }
+    
+    public function add()
+    {
+        //перевіряємо, чи був викликаний метод POST
+        if ( $_SERVER['REQUEST_METHOD'] == 'POST' ){
+
+            //перевіряємо чи існують введені у форму значення, і чи вони не порожні
+            if ( isset( $_POST['name'] ) && !empty( $_POST['name'] ) &&
+                 isset( $_POST['msgShort'] ) && !empty( $_POST['msgShort'] ) &&
+                 isset( $_POST['msgFull'] ) && !empty( $_POST['msgFull'] ) ){
+
+                //екранізуємо потенційно небезпечні символи    
+                $name = stripslashes( trim( htmlspecialchars( $_POST['name'] ) ) );
+                $msgShort = stripslashes( trim( htmlspecialchars( $_POST['msgShort'] ) ) );
+                $msgFull = stripslashes( trim( htmlspecialchars( $_POST['msgFull'] ) ) );
+                
+                //викликаємо метод add() класу Model_guestbook і передаємо йому введені у форму дані
+                $this -> model -> add( $name, $msgShort, $msgFull );
+                //переходимо на головну сторінку    
+                $this -> main();
+                
             }else{
-                echo "Будь ласка заповніть всі поля!";
+                //$error = "Будь ласка заповніть всі поля!";
             }
         }
-        $main='main.tpl';
-        $mitteln="form.tpl";
-        $this->view->actionIndex($main, $mitteln);
+        //викликаємо метод actionIndex() класу View
+        $main = 'main.tpl';
+        $mitteln = "form.tpl";
+        $this-> view-> actionIndex( $main, $mitteln );
     }
        
     function main()
     {
-        
-        $this->model = new Model_guestbook();
-        ob_start();
+        //викликаємо метод get() класу Model_guestbook, і передаємо $listAll масив всіх записів з БД
         $listAll = $this->model->get();
-        
-        include_once 'views/guestbook/list.tpl';
-        
-        $buffer = ob_get_contents();
-        ob_end_clean();
-        $mitteln=$buffer;
-        include_once 'views/layout/main.tpl';
+        //виводимо головну сторінку
+        $main = 'main.tpl';
+        $mitteln = "list.tpl";
+        $this -> view -> actionIndex ($main, $mitteln );
     }    
     
-    function delete()
+    public function delete()
     {
-     
-        $this->model = new Model_guestbook();
-        
-        $routes = explode('/', $_SERVER['REQUEST_URI']);
-        //отримуємо id
-            if ( !empty($routes[3]) )
-            {
-                    $id = $routes[3];
-            }
-        
-        if (isset($id)&&!empty($id)){
-            $del=(int)$id*1;
-    
-        $this->model->delete($del);
+        //отримуємо масив із рядка URL
+        $routes = explode( '/', $_SERVER['REQUEST_URI'] );
+        //отримуємо id запису, який треба видалити
+        if ( !empty( $routes[3] ) ) {
+                $id = $routes[3];
+        }
+        //якщо id існує і непоронє присвоюємо його $del і приводимо до типу int
+        if ( isset ( $id ) && !empty( $id ) ){
+            $del = (int) $id;
+            //викликаємо метод delete() класу Model_guestbook для видалення запису з БД
+            $this -> model -> delete( $del );
         }else{
             
-            echo 'Не видалено'.$id;
+            //echo $error = 'Не видалено'.$id;
         }
-        echo "<script type=\"text/javascript\">
-            window.location = \"/guestbook/main\"
-            </script>";
+        //переходимо на головну сторінку
+        echo    "<script type=\"text/javascript\">
+                window.location = \"/guestbook/main\"
+                </script>";
     }
     
-    function edit()
+    public function edit()
     {
-        $this->model = new Model_guestbook();
-        ob_start();
-        $routes = explode('/', $_SERVER['REQUEST_URI']);        
-            //отримуємо id
-		if ( !empty($routes[3]) )
-		{
-			$id = $routes[3];
-		}
-            
-                if (isset($id)&&!empty($id)){
-            $edit=(int)$id*1;
-            
-            $result=$this->model->edit($edit);
-            $row=mysqli_fetch_array($result);
-                $name=$row['name'];    
-                $msgShort=$row['msg_short'];
-                $msgFull=$row['msg_full'];
-                }
-            
-            echo "<a href=\"/guestbook/main\">На головну</a><br/><br/>";
-            include_once 'views/guestbook/edit.tpl';
-            
-            $buffer = ob_get_contents();
-            ob_end_clean();
-            $mitteln=$buffer;
-            include_once 'views/layout/main.tpl';
+        //отримуємо масив із рядка URL
+        $routes = explode( '/', $_SERVER['REQUEST_URI'] );        
+        //отримуємо id запису, який треба відредагувати
+        if ( !empty( $routes[3] ) ) {
+            $id = $routes[3];
         }
+        //якщо id існує і непоронє присвоюємо його $del і приводимо до типу int
+        if ( isset( $id ) && !empty( $id ) ) {
+            $edit = (int) $id;
+            //викликаємо метод edit() класу Model_guestbook для виводу форми редагування запису 
+            $result = $this -> model -> edit( $edit );
+            
+            $row = mysqli_fetch_array( $result );
+         
+            $name = $row['name'];    
+            $msgShort = $row['msg_short'];
+            $msgFull = $row['msg_full'];
+        }
+        //виводимо форму для редагування
+        $main = 'main.tpl';
+        $mitteln = "form.tpl";
+        $this-> view-> actionIndex( $main, $mitteln );
         
-        function editor() 
-        {
-            $this->model = new Model_guestbook();
-
-            if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-                if (isset($_POST['name']) && !empty($_POST['name']) &&
-                        isset($_POST['msgShort']) && !empty($_POST['msgShort']) &&
-                        isset($_POST['msgFull']) && !empty($_POST['msgFull'])) {
-                    $name = $_POST['name'];
-                    $msgShort = $_POST['msgShort'];
-                    $msgFull = $_POST['msgFull'];
-                    $edit = $_POST['edit'];
-
-                    $this->model->editor($name, $msgShort, $msgFull, $edit);
-                    $this->main();
-                }else{
-                    echo "Будь ласка заповніть всі поля!";
-                }
-            }
-        $main='main.tpl';
-        $mitteln="form.tpl";
-        $this->view->actionIndex($main, $mitteln);
     }
-    
-    function view()
-    {
-     
-        $this->model = new Model_guestbook();
         
-        $routes = explode('/', $_SERVER['REQUEST_URI']);        
-            //отримуємо id
-		if ( !empty($routes[3]) )
-		{
-			$id = $routes[3];
-		}
-            
-                if (isset($id)&&!empty($id)){
-            $view=(int)$id*1;
-            
-            $result=$this->model->view($view);
-            $row=mysqli_fetch_array($result);
-                $id=$row['id'];
-            $dateCreate=$row['date_create'];
-            $dateEdit=$row['date_edit'];
-            $name=$row['name'];
-            $msgShort=$row['msg_short'];
-            $msgFull=$row['msg_full'];
-
-            if($dateCreate==$dateEdit){
-                $date="Дата створення: $dateCreate<br/>";
+    public function editor() 
+    {
+        //перевіряємо, чи був викликаний метод POST
+        if ( $_SERVER['REQUEST_METHOD'] == 'POST' ) {
+            //перевіряємо чи існують введені у форму значення, і чи вони не порожні
+            if ( isset( $_POST['name'] ) && !empty( $_POST['name'] ) &&
+                 isset( $_POST['msgShort'] ) && !empty( $_POST['msgShort'] ) &&
+                 isset( $_POST['msgFull'] ) && !empty( $_POST['msgFull'] ) ) {
+ 
+                $name = $_POST['name'];
+                $msgShort = $_POST['msgShort'];
+                $msgFull = $_POST['msgFull'];
+                $edit = $_POST['edit'];
+                //викликаємо метод editor() класу Model_guestbook, який редагує дані у БД
+                $this -> model -> editor( $name, $msgShort, $msgFull, $edit );
+                //переходимо на головну сторінку    
+                $this -> main();
             }else{
-                $date="Дата створення: $dateCreate<br/>       
-                       Дата редагування: $dateEdit";    
-            }
+                    //$error = "Будь ласка заповніть всі поля!";
                 }
-    
-            
-            include_once 'views/guestbook/view.tpl';
-
         }
+        //викликаємо метод actionIndex() класу View
+        $main = 'main.tpl';
+        $mitteln = 'form.tpl';
+        $this -> view -> actionIndex( $main, $mitteln );
+    }
+    
+    public function view()
+    {
+        //отримуємо масив із рядка URL
+        $routes = explode( '/', $_SERVER['REQUEST_URI'] );        
+        //отримуємо id запису, який треба відредагувати
+        if ( !empty( $routes[3] ) ) {
+            $id = $routes[3];
+        }
+        //якщо id існує і непоронє присвоюємо його $del і приводимо до типу int
+        if ( isset( $id ) && !empty( $id ) ) {
+            $view = (int) $id;
+            //викликаємо метод view() класу Model_guestbook для виводу окремого запису
+            $result = $this -> model -> view($view);
+            
+            $row = mysqli_fetch_array( $result );
+                
+            $id = $row['id'];
+            $dateCreate = $row['date_create'];
+            $dateEdit = $row['date_edit'];
+            $name = $row['name'];
+            $msgShort = $row['msg_short'];
+            $msgFull = $row['msg_full'];
+
+            if( $dateCreate == $dateEdit ) {
+                $date = "Дата створення: $dateCreate <br/>";
+            }else{
+                $date = "Дата створення: $dateCreate <br/>       
+                         Дата редагування: $dateEdit";    
+            }
+        }
+        //викликаємо метод actionIndex() класу View
+        $main = 'main.tpl';
+        $mitteln = 'view.tpl';
+        $this -> view -> actionIndex( $main, $mitteln );
+    }
     
     
 }

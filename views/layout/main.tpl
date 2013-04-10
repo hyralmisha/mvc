@@ -13,14 +13,7 @@ and open the template in the editor.
         <h1>Гостьова книга</h1>        
         
         <?php
-        if (file_exists ('views/guestbook/'.$mitteln)){
-            include_once 'views/guestbook/'.$mitteln;
-        }else{
         echo $mitteln;
-
-        ob_flush();
-        ob_clean(); 
-        }
         ?>
         
     </body>

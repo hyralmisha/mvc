@@ -1,9 +1,9 @@
-<a href="add">Додати новий запис</a>
+    <a href="add">Додати новий запис</a>
 
 <?php 
 
-if (!empty ($listAll)){
-    foreach ($listAll as $list) {
+if ( !empty ( $listAll ) ) {
+    foreach ( $listAll as $list ) {
                     $id = $list['id'];
                     $name = $list['name'];
                     $msgShort = $list['msg_short'];
@@ -13,11 +13,11 @@ if (!empty ($listAll)){
                     $reportName = $participators['report_name'];
 
 
-        if($dateCreate==$dateEdit){
-            $date="Дата створення: $dateCreate<br/>";
+        if( $dateCreate == $dateEdit ) {
+            $date = "Дата створення: $dateCreate <br/>";
         }else{
-            $date="Дата створення: $dateCreate<br/>       
-                   Дата редагування: $dateEdit";    
+            $date = "Дата створення: $dateCreate <br/>       
+                    Дата редагування: $dateEdit";    
         }
       
 ?>
@@ -34,5 +34,7 @@ if (!empty ($listAll)){
                    
 <?php    
     }        
-}
+}else{
+        echo "Ліст не ";
+        }
 ?>

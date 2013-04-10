@@ -4,7 +4,7 @@ class Model_guestbook extends Model
 
 {
     
-    public function add($name,$msgShort,$msgFull)
+    public function add( $name, $msgShort, $msgFull )
     {
        /**
         * записує до БД новий запис
@@ -17,10 +17,10 @@ class Model_guestbook extends Model
         * запису (поточні час і дата)
         */
         
-        $dateCreate=date("Y-m-d H:i:s");
-        $dateEdit= date("Y-m-d H:i:s");
+        $dateCreate = date( "Y-m-d H:i:s" );
+        $dateEdit = date( "Y-m-d H:i:s" );
         
-        $this->_query="INSERT INTO gbook_msg(
+        $this -> _query = "INSERT INTO gbook_msg(
                                 name,
                                 msg_short,
                                 msg_full,
@@ -32,11 +32,11 @@ class Model_guestbook extends Model
                                 '$msgFull',
                                 '$dateCreate',
                                 '$dateEdit')";
-        mysqli_query($this->_db,$this->_query)
+        mysqli_query( $this -> _db, $this -> _query)
                 or die ('Помилка: запит до бази даних не може бути виконаний!');
     }
     
-    public function delete($del)
+    public function delete( $del )
     {
         /**
         * видаляє з БД повідомлення 
@@ -44,12 +44,12 @@ class Model_guestbook extends Model
         * @param int $del --- id повідомлення, яке потрібно видалити з БД
         */
         
-        $this->_query="DELETE FROM gbook_msg WHERE id=$del";
-        mysqli_query($this->_db,$this->_query)
+        $this -> _query = "DELETE FROM gbook_msg WHERE id = $del";
+        mysqli_query( $this -> _db, $this -> _query)
                 or die ('Помилка: запит до бази даних не може бути виконаний!');
     }
     
-    public function edit($edit)
+    public function edit( $edit )
     {
        /**
         * повертає елементи повідомлення, яке потрібно відредагувати
@@ -60,15 +60,15 @@ class Model_guestbook extends Model
         * яке потрібно відредагувати
         */
         
-        $this->_query="SELECT * FROM gbook_msg 
-                                WHERE id=$edit";
-        $result = mysqli_query($this->_db,$this->_query)
+        $this -> _query = "SELECT * FROM gbook_msg 
+                                WHERE id = $edit";
+        $result = mysqli_query( $this -> _db, $this -> _query)
                 or die ('Помилка: запит до бази даних не може бути виконаний!');
     
         return $result;
     }
     
-    public function editor($name,$msgShort, $msgFull, $edit )
+    public function editor( $name, $msgShort, $msgFull, $edit )
     {
        /**
         * редагує записи у БД
@@ -82,15 +82,15 @@ class Model_guestbook extends Model
         * запису (поточні час і дата)
         */
         
-        $dateEdit=date("Y-m-d H:i:s"); 
-            $this->_query="UPDATE gbook_msg 
-                        SET
-                            name='$name',
-                            msg_short='$msgShort',
-                            msg_full='$msgFull',
-                            date_edit='$dateEdit'
-                        WHERE id=$edit;";
-            mysqli_query($this->_db,$this->_query)
+        $dateEdit = date( "Y-m-d H:i:s" ); 
+            $this -> _query = "UPDATE gbook_msg 
+                                    SET
+                                        name = '$name',
+                                        msg_short = '$msgShort',
+                                        msg_full = '$msgFull',
+                                        date_edit = '$dateEdit'
+                                    WHERE id = $edit;";
+            mysqli_query( $this -> _db, $this -> _query)
                     or die ('Помилка: запит до бази даних не може бути виконаний!');
     }
     
@@ -102,25 +102,25 @@ class Model_guestbook extends Model
         * @return $result --- інформація про всі записи у БД
         */
         
-        $this->_query="SELECT * FROM gbook_msg 
+        $this -> _query = "SELECT * FROM gbook_msg 
                                 ORDER BY id DESC";
-        $result = mysqli_query($this->_db,$this->_query)
+        $result = mysqli_query( $this -> _db, $this -> _query)
                 or die ('Помилка: запит до бази даних не може бути виконаний!');
         
-        while ($row=mysqli_fetch_array($result)){
-            $list['id']=$row['id'];
-            $list['date_create']=$row['date_create'];
-            $list['date_edit']=$row['date_edit'];
-            $list['name']=$row['name'];
-            $list['msg_short']=$row['msg_short'];
-            $list['msg_full']=$row['msg_full'];
+        while ( $row = mysqli_fetch_array( $result ) ) {
+            $list['id'] = $row['id'];
+            $list['date_create'] = $row['date_create'];
+            $list['date_edit'] = $row['date_edit'];
+            $list['name'] = $row['name'];
+            $list['msg_short'] = $row['msg_short'];
+            $list['msg_full'] = $row['msg_full'];
             
-            $listAll[]=$list;
+            $listAll[] = $list;
         }
         return $listAll;
     }
     
-    public function view($view)
+    public function view( $view )
     {
        /**
         * повертає елементи повідомлення, яке потрібно вивести в окремову вікні
@@ -132,9 +132,9 @@ class Model_guestbook extends Model
         * яке потрібно вивести в окремову вікні
         */
         
-        $this->_query="SELECT * FROM gbook_msg 
-                                WHERE id=$view";
-        $result = mysqli_query($this->_db,$this->_query)
+        $this -> _query = "SELECT * FROM gbook_msg 
+                                WHERE id = $view";
+        $result = mysqli_query( $this -> _db, $this -> _query)
                 or die ('Помилка: запит до бази даних не може бути виконаний!');
     
         return $result;
