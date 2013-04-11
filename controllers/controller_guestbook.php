@@ -53,15 +53,11 @@ class Controller_guestbook extends Controller
     
     public function delete()
     {
-        //отримуємо масив із рядка URL
-        $routes = explode( '/', $_SERVER['REQUEST_URI'] );
         //отримуємо id запису, який треба видалити
-        if ( !empty( $routes[3] ) ) {
-                $id = $routes[3];
-        }
         //якщо id існує і непоронє присвоюємо його $del і приводимо до типу int
-        if ( isset ( $id ) && !empty( $id ) ){
-            $del = (int) $id;
+        if ( isset ( $_GET['id'] ) && !empty( $_GET['id'] ) ){
+            $del = $_GET['id'];
+            (int) $del;
             //викликаємо метод delete() класу Model_guestbook для видалення запису з БД
             $this -> model -> delete( $del );
         }else{
@@ -76,15 +72,13 @@ class Controller_guestbook extends Controller
     
     public function edit()
     {
-        //отримуємо масив із рядка URL
-        $routes = explode( '/', $_SERVER['REQUEST_URI'] );        
         //отримуємо id запису, який треба відредагувати
-        if ( !empty( $routes[3] ) ) {
-            $id = $routes[3];
-        }
         //якщо id існує і непоронє присвоюємо його $del і приводимо до типу int
-        if ( isset( $id ) && !empty( $id ) ) {
-            $edit = (int) $id;
+        if ( isset ( $_GET['id'] ) && !empty( $_GET['id'] ) ){
+            $edit = $_GET['id'];
+            (int) $edit;
+        
+        
             //викликаємо метод edit() класу Model_guestbook для виводу форми редагування запису 
             $result = $this -> model -> edit( $edit );
             

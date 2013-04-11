@@ -42,7 +42,8 @@ class Route
                  * отримуємо id
                  */
 		if ( !empty( $routes[3] ) ) {
-                    $id = $routes[3];
+                    $_GET['id']= $routes[3];
+                    $id=$_GET['id'];
 		}
                 
                 /*
