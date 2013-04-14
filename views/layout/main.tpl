@@ -10,7 +10,9 @@ and open the template in the editor.
     </head>
     <body>
        
-        <h1>Гостьова книга</h1>        
+        <h1>Гостьова книга</h1>
+        <a href="/mvc"> Головна </a> &nbsp; &nbsp; &nbsp; 
+        <a href="/mvc/authorization/authorization"> Увійти </a> <br/> <hr/><br/>
         
         <?php
         echo $mitteln;

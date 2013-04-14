@@ -4,15 +4,13 @@
 class View 
 
 {
-    const GUESTBOOK='views/guestbook/';//шлях до view-файлів
-    const LAYOUT='views/layout/';//шлях до layout-файлів
-
+    
     public function __construct()
     {
     
     }
     
-    public function actionIndex($main,$mitteln)
+    public function actionIndex($main,$mitteln, $param="")
     {
         /**
          * підключає основний файл шаблону сторінки
@@ -23,13 +21,14 @@ class View
         
         ob_start(); 
         ob_start();
+        
         //підключаємо view-файл 
-        include_once self :: GUESTBOOK.$mitteln; 
+        include_once $mitteln; 
         $mitteln=ob_get_contents();
         ob_end_clean();
         
         //підключаємо layout-файл 
-        include_once self :: LAYOUT.$main;
+        include_once $main;
         ob_end_flush();
         ob_end_clean();   
         
@@ -39,4 +38,3 @@ class View
 }
 
 ?>
-

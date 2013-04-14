@@ -27,22 +27,22 @@ class Route
 		/*
                  * отримуємо ім'я контроллера
                 */ 
-		if ( !empty( $routes[1] ) ) {	
-                    $controller_name = $routes[1];
+		if ( !empty( $routes[2] ) ) {	
+                    $controller_name = $routes[2];
 		}
                 
                 /*
                  * отримуємо ім'я екшена
                  */
-		if ( !empty( $routes[2] ) ) {	
-                    $action_name = $routes[2];
+		if ( !empty( $routes[3] ) ) {	
+                    $action_name = $routes[3];
 		}
 		
 		/*
                  * отримуємо id
                  */
-		if ( !empty( $routes[3] ) ) {
-                    $_GET['id']= $routes[3];
+		if ( !empty( $routes[4] ) ) {
+                    $_GET['id']= $routes[4];
                     $id=$_GET['id'];
 		}
                 

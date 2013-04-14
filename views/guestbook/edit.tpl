@@ -1,6 +1,6 @@
 <!--
 Форма для редагування запису
--->
+
 
 <form action="/guestbook/editor" method="post">
     <input type="hidden" name="edit" value="<?php echo $edit; ?>"/><br />
@@ -13,3 +13,5 @@
     <br />
     <input type="submit" value="Додати" />
 </form> 
+
+-->

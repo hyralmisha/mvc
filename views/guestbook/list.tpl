@@ -1,9 +1,7 @@
-    <a href="add">Додати новий запис</a>
-
 <?php 
 
-if ( !empty ( $listAll ) ) {
-    foreach ( $listAll as $list ) {
+if ( !empty ( $param ) ) {
+    foreach ( $param as $list ) {
                     $id = $list['id'];
                     $name = $list['name'];
                     $msgShort = $list['msg_short'];
@@ -25,16 +23,12 @@ if ( !empty ( $listAll ) ) {
 <hr/>
     
 <?php echo $name; ?><br/>
-<p align='right'> <?php echo $date; ?>
-<p><?php echo $msgShort; ?>
-<p><?php echo $msgFull; ?>
-<p align='right'><a href="edit/<?php echo $id; ?>">Реданувати</a>&nbsp; &nbsp;  
-                   <a href="delete/<?php echo $id; ?>">Видалити</a>
-                   <a href="view/<?php echo $id; ?>">Переглянути</a>
+<p align='right'> <?php echo $date; ?></p>
+<p><?php echo $msgShort; ?></p>
+<p><?php echo $msgFull; ?></p>
+<p align='right'><a href="/mvc/guestbook/view/<?php echo $id; ?>">Переглянути</a></p>
                    
 <?php    
     }        
-}else{
-        echo "Ліст не ";
-        }
+}
 ?>

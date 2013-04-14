@@ -3,6 +3,7 @@
 class Controller_guestbook extends Controller
 
 {
+    
     public function __construct()
     {
         //перегружаєм конструктор з батьківского класу
@@ -31,14 +32,19 @@ class Controller_guestbook extends Controller
                 //переходимо на головну сторінку    
                 $this -> main();
                 
+                
             }else{
-                //$error = "Будь ласка заповніть всі поля!";
+                $row['error'] = "Будь ласка заповніть всі поля!";
             }
+        }  else {
+        
+            //вказуємо яким методом буде оброблятися форма
+            $row['action']='add';
+            $main = self :: LAYOUT.'main.tpl';
+            $mitteln = self :: GUESTBOOK."form.tpl";
+            //викликаємо метод actionIndex() класу View
+            $this-> view-> actionIndex( $main, $mitteln, $row );
         }
-        //викликаємо метод actionIndex() класу View
-        $main = 'main.tpl';
-        $mitteln = "form.tpl";
-        $this-> view-> actionIndex( $main, $mitteln );
     }
        
     function main()
@@ -46,9 +52,15 @@ class Controller_guestbook extends Controller
         //викликаємо метод get() класу Model_guestbook, і передаємо $listAll масив всіх записів з БД
         $listAll = $this->model->get();
         //виводимо головну сторінку
-        $main = 'main.tpl';
-        $mitteln = "list.tpl";
-        $this -> view -> actionIndex ($main, $mitteln );
+        if ( isset( $_SESSION['email'] ) && !empty( $_SESSION['email'] )){
+            $main = parent :: LAYOUT.'user_main.tpl';
+            $mitteln = parent :: GUESTBOOK."user_list.tpl";
+        }else{
+            $main = parent :: LAYOUT.'main.tpl';
+            $mitteln = parent :: GUESTBOOK."list.tpl";
+        }
+        
+        $this -> view -> actionIndex ($main, $mitteln, $listAll );
     }    
     
     public function delete()
@@ -66,7 +78,7 @@ class Controller_guestbook extends Controller
         }
         //переходимо на головну сторінку
         echo    "<script type=\"text/javascript\">
-                window.location = \"/guestbook/main\"
+                window.location = \"/mvc/guestbook/main\"
                 </script>";
     }
     
@@ -78,25 +90,13 @@ class Controller_guestbook extends Controller
             $edit = $_GET['id'];
             (int) $edit;
         
-        
             //викликаємо метод edit() класу Model_guestbook для виводу форми редагування запису 
             $result = $this -> model -> edit( $edit );
             
             $row = mysqli_fetch_array( $result );
-         
-            $name = $row['name'];    
-            $msgShort = $row['msg_short'];
-            $msgFull = $row['msg_full'];
+            $row['action']='edit';
         }
-        //виводимо форму для редагування
-        $main = 'main.tpl';
-        $mitteln = "form.tpl";
-        $this-> view-> actionIndex( $main, $mitteln );
-        
-    }
-        
-    public function editor() 
-    {
+    
         //перевіряємо, чи був викликаний метод POST
         if ( $_SERVER['REQUEST_METHOD'] == 'POST' ) {
             //перевіряємо чи існують введені у форму значення, і чи вони не порожні
@@ -107,55 +107,53 @@ class Controller_guestbook extends Controller
                 $name = $_POST['name'];
                 $msgShort = $_POST['msgShort'];
                 $msgFull = $_POST['msgFull'];
-                $edit = $_POST['edit'];
+                $edit = (int) $_POST['edit'];
                 //викликаємо метод editor() класу Model_guestbook, який редагує дані у БД
                 $this -> model -> editor( $name, $msgShort, $msgFull, $edit );
                 //переходимо на головну сторінку    
                 $this -> main();
-            }else{
-                    //$error = "Будь ласка заповніть всі поля!";
-                }
-        }
+            }
+        }  else {
         //викликаємо метод actionIndex() класу View
-        $main = 'main.tpl';
-        $mitteln = 'form.tpl';
-        $this -> view -> actionIndex( $main, $mitteln );
+        //виводимо форму для редагування
+        $main = parent :: LAYOUT.'main.tpl';
+        $mitteln = parent :: GUESTBOOK.'form.tpl';
+        $this -> view -> actionIndex( $main, $mitteln, $row );
+        }
     }
     
     public function view()
     {
-        //отримуємо масив із рядка URL
-        $routes = explode( '/', $_SERVER['REQUEST_URI'] );        
         //отримуємо id запису, який треба відредагувати
-        if ( !empty( $routes[3] ) ) {
-            $id = $routes[3];
-        }
         //якщо id існує і непоронє присвоюємо його $del і приводимо до типу int
-        if ( isset( $id ) && !empty( $id ) ) {
-            $view = (int) $id;
+        if ( isset ( $_GET['id'] ) && !empty( $_GET['id'] ) ){
+            $view = $_GET['id'];
+            (int) $view;
+        
             //викликаємо метод view() класу Model_guestbook для виводу окремого запису
             $result = $this -> model -> view($view);
             
             $row = mysqli_fetch_array( $result );
-                
-            $id = $row['id'];
+            
             $dateCreate = $row['date_create'];
             $dateEdit = $row['date_edit'];
-            $name = $row['name'];
-            $msgShort = $row['msg_short'];
-            $msgFull = $row['msg_full'];
-
+         
             if( $dateCreate == $dateEdit ) {
-                $date = "Дата створення: $dateCreate <br/>";
+                $row['date'] = "Дата створення: $dateCreate <br/>";
             }else{
-                $date = "Дата створення: $dateCreate <br/>       
+                $row['date'] = "Дата створення: $dateCreate <br/>       
                          Дата редагування: $dateEdit";    
             }
         }
         //викликаємо метод actionIndex() класу View
-        $main = 'main.tpl';
-        $mitteln = 'view.tpl';
-        $this -> view -> actionIndex( $main, $mitteln );
+        if ( isset( $_SESSION['email'] ) && !empty( $_SESSION['email'] )){
+            $main = parent :: LAYOUT.'user_main.tpl';
+            $mitteln = parent :: GUESTBOOK."user_view.tpl";
+        }else{
+            $main = parent :: LAYOUT.'main.tpl';
+            $mitteln = parent :: GUESTBOOK."view.tpl";
+        }
+        $this -> view -> actionIndex( $main, $mitteln, $row );
     }
     
     
