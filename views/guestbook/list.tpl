@@ -1,34 +1,15 @@
 <?php 
-
-if ( !empty ( $param ) ) {
+    echo $param['error'];
     foreach ( $param as $list ) {
-                    $id = $list['id'];
-                    $name = $list['name'];
-                    $msgShort = $list['msg_short'];
-                    $msgFull = $list['msg_full'];
-                    $dateCreate = $list['date_create'];
-                    $dateEdit = $list['date_edit'];
-                    $reportName = $participators['report_name'];
-
-
-        if( $dateCreate == $dateEdit ) {
-            $date = "Дата створення: $dateCreate <br/>";
-        }else{
-            $date = "Дата створення: $dateCreate <br/>       
-                    Дата редагування: $dateEdit";    
-        }
-      
 ?>
 
 <hr/>
-    
-<?php echo $name; ?><br/>
-<p align='right'> <?php echo $date; ?></p>
-<p><?php echo $msgShort; ?></p>
-<p><?php echo $msgFull; ?></p>
-<p align='right'><a href="/mvc/guestbook/view/<?php echo $id; ?>">Переглянути</a></p>
+<?php echo $list['name']; ?><br/>
+<p align='right'> <?php echo $list['date']; ?></p>
+<p><?php echo $list['msg_short']; ?></p>
+<p><?php echo $list['msg_full']; ?></p>
+<p align='right'><a href="/mvc/guestbook/view/<?php echo $list['id']; ?>">Переглянути</a></p>
                    
 <?php    
     }        
-}
 ?>

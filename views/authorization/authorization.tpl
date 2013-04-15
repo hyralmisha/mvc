@@ -9,5 +9,5 @@
     <input type="submit" value="Увійти" />
 </form>
 <br/><br/><br/>
-<a href="#"> Забули пароль?</a><br/><br/>
+<a href="/mvc/authorization/passRecovery"> Забули пароль?</a><br/><br/>
 <a href="/mvc/authorization/registration"> Зареєструватся на сайті!</a><br/><br/>

@@ -32,48 +32,49 @@ class Model_guestbook extends Model
                                 '$msgFull',
                                 '$dateCreate',
                                 '$dateEdit')";
-        mysqli_query( $this -> _db, $this -> _query)
-                or die ('Помилка: запит до бази даних не може бути виконаний!');
+        $result = mysqli_query( $this -> _db, $this -> _query);
+        
+        return $result;
     }
     
-    public function delete( $del )
+    public function delete( $id )
     {
         /**
-        * видаляє з БД повідомлення 
+        * видаляє з БД запис 
         * 
-        * @param int $del --- id повідомлення, яке потрібно видалити з БД
+        * @param int $id --- id повідомлення, яке потрібно видалити з БД
         */
         
-        $this -> _query = "DELETE FROM gbook_msg WHERE id = $del";
-        mysqli_query( $this -> _db, $this -> _query)
-                or die ('Помилка: запит до бази даних не може бути виконаний!');
+        $this -> _query = "DELETE FROM gbook_msg WHERE id = $id";
+        $result = mysqli_query( $this -> _db, $this -> _query);
+        
+        return $result;
     }
     
-    public function edit( $edit )
+    public function edit( $id )
     {
        /**
         * повертає елементи повідомлення, яке потрібно відредагувати
         * 
-        * @param int $edit --- id повідомлення, яке потрібно відредагувати
+        * @param int $id --- id повідомлення, яке потрібно відредагувати
         * 
         * @return $result --- інформація про повідомлення, 
         * яке потрібно відредагувати
         */
         
         $this -> _query = "SELECT * FROM gbook_msg 
-                                WHERE id = $edit";
-        $result = mysqli_query( $this -> _db, $this -> _query)
-                or die ('Помилка: запит до бази даних не може бути виконаний!');
+                                WHERE id = $id";
+        $result = mysqli_query( $this -> _db, $this -> _query);
     
         return $result;
     }
     
-    public function editor( $name, $msgShort, $msgFull, $edit )
+    public function editor( $name, $msgShort, $msgFull, $id )
     {
        /**
         * редагує записи у БД
         * 
-        * @param int $edit id запису, який редагується  
+        * @param int $id id запису, який редагується  
         * @param sting $name нова назва запису
         * @param sting $msgShort новий опис запису
         * @param sting $msgFull новий текст запису
@@ -89,9 +90,10 @@ class Model_guestbook extends Model
                                         msg_short = '$msgShort',
                                         msg_full = '$msgFull',
                                         date_edit = '$dateEdit'
-                                    WHERE id = $edit;";
-            mysqli_query( $this -> _db, $this -> _query)
-                    or die ('Помилка: запит до бази даних не може бути виконаний!');
+                                    WHERE id = $id;";
+            $result = mysqli_query( $this -> _db, $this -> _query);
+            
+            return $result;
     }
     
     public function get()
@@ -104,10 +106,11 @@ class Model_guestbook extends Model
         
         $this -> _query = "SELECT * FROM gbook_msg 
                                 ORDER BY id DESC";
-        $result = mysqli_query( $this -> _db, $this -> _query)
-                or die ('Помилка: запит до бази даних не може бути виконаний!');
+        $result = mysqli_query( $this -> _db, $this -> _query);
         
-        while ( $row = mysqli_fetch_array( $result ) ) {
+        if ( isset( $result ) && !empty( $result ) ){
+        
+            while ( $row = mysqli_fetch_array( $result ) ) {
             $list['id'] = $row['id'];
             $list['date_create'] = $row['date_create'];
             $list['date_edit'] = $row['date_edit'];
@@ -115,9 +118,20 @@ class Model_guestbook extends Model
             $list['msg_short'] = $row['msg_short'];
             $list['msg_full'] = $row['msg_full'];
             
+            if( $row['date_create'] == $row['date_edit'] ) {
+                $list['date'] = "Дата створення: ".$row['date_create']."<br/>";
+            }else{
+                $list['date'] = "Дата створення: ".$row['date_create']."<br/>
+                                 Дата редагування: ".$row['date_edit'];    
+        }
+            
             $listAll[] = $list;
         }
-        return $listAll;
+        
+            return $listAll;
+        }  else {
+            return $result;
+        }
     }
     
     public function view( $view )
@@ -134,8 +148,7 @@ class Model_guestbook extends Model
         
         $this -> _query = "SELECT * FROM gbook_msg 
                                 WHERE id = $view";
-        $result = mysqli_query( $this -> _db, $this -> _query)
-                or die ('Помилка: запит до бази даних не може бути виконаний!');
+        $result = mysqli_query( $this -> _db, $this -> _query);
     
         return $result;
     }
