@@ -4,9 +4,9 @@ class Controller
 
 {
     
-    const GUESTBOOK = 'views/guestbook/';//шлях до view-файлів
-    const LAYOUT = 'views/layout/';//шлях до layout-файлів
-    const AUTHORIZATION = 'views/authorization/';
+    protected $_guestbok = 'views/guestbook/';//шлях до view-файлів
+    protected $_layout = 'views/layout/';//шлях до layout-файлів
+    protected  $_authorization = 'views/authorization/';
 
     
     /**

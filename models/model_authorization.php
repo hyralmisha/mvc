@@ -150,8 +150,9 @@ class Model_authorization extends Model
                                     SET
                                         hash_key = '$hashKey'
                                     WHERE email = '$email';";
-            mysqli_query( $this -> _db, $this -> _query)
-                    or die ('Помилка: запит до бази даних не може бути виконаний!');
+            $result = mysqli_query( $this -> _db, $this -> _query);
+            
+            return $result;
     }
 }
 ?>

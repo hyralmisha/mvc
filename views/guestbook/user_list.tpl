@@ -2,7 +2,7 @@
 
 <?php 
     echo $param['error'];
-    foreach ( $param as $list ) {
+    foreach ( $param['row1'] as $list ) {
 ?>
 
 <hr/>
@@ -15,5 +15,9 @@
                    <a href="/mvc/guestbook/view/<?php echo $list['id']; ?>">Переглянути</a> </p>
                    
 <?php    
-    }        
+    }  
+    
+    foreach ( $param['pag'] as $list ) {
+        echo $list."&nbsp;";
+    }
 ?>

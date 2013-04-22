@@ -96,7 +96,9 @@ class Model_guestbook extends Model
             return $result;
     }
     
-    public function get()
+    
+    
+    public function get( $cpage, $itemsperpage ) 
     {
        /**
         * повертає інформацію про всі записи у БД
@@ -105,12 +107,16 @@ class Model_guestbook extends Model
         */
         
         $this -> _query = "SELECT * FROM gbook_msg 
-                                ORDER BY id DESC";
+                                ORDER BY id DESC LIMIT $cpage, $itemsperpage;";
+        
+        
         $result = mysqli_query( $this -> _db, $this -> _query);
         
         if ( isset( $result ) && !empty( $result ) ){
         
             while ( $row = mysqli_fetch_array( $result ) ) {
+                
+                
             $list['id'] = $row['id'];
             $list['date_create'] = $row['date_create'];
             $list['date_edit'] = $row['date_edit'];
@@ -128,7 +134,25 @@ class Model_guestbook extends Model
             $listAll[] = $list;
         }
         
+        
             return $listAll;
+        }  else {
+            return $result;
+        }
+    }
+    
+    public function get1() 
+    {
+        $this -> _query = "SELECT * FROM gbook_msg ;";
+        
+        
+        $result = mysqli_query( $this -> _db, $this -> _query);
+        if ( isset( $result ) && !empty( $result ) ){
+            $i = 0;
+            while ( $row = mysqli_fetch_array( $result ) ) {
+            $i++;
+            }
+            return $i;
         }  else {
             return $result;
         }

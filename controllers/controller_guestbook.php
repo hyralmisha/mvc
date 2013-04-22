@@ -4,6 +4,8 @@ class Controller_guestbook extends Controller
 
 {
     
+    protected $_site = "http://localhost/mvc/guestbook/main/";
+    
     public function __construct()
     {
         //перегружаєм конструктор з батьківского класу
@@ -49,34 +51,86 @@ class Controller_guestbook extends Controller
         } 
         //вказуємо яким методом буде оброблятися форма
         $row['action'] = 'add';
-        $main = self :: LAYOUT.'main.tpl';
-        $mitteln = self :: GUESTBOOK."form.tpl";
+        $main = self :: $this -> _layout .'main.tpl';
+        $mitteln = self :: $this -> _guestbok ."form.tpl";
         //викликаємо метод actionIndex() класу View
         $this-> view-> actionIndex( $main, $mitteln, $row );
         
     }
        
-    function main()
+    public function main()
     {
         /**
         * виводить всі записи з БД на головну сторінку 
         * 
         */
         
-        //викликаємо метод get() класу Model_guestbook, і передаємо 
-        //$row масив всіх записів з БД
-        if ( $this -> model -> get() ){
-            $row = $this -> model -> get();
+        $pagedisprange = 2;//кількість додаткових посилань (номери сторінок)
+        $itemsperpage = 3;//кількість записів, що виводяться 
+        // якщо сторінка не задана, то будемо на 1-й
+        if ( isset( $_GET['page'] ) ) { 
+            $cpage = (int) $_GET['page']; 
+        }else { 
+            $cpage = 1; 
+        }
+            
+        if ( ! $itemscount = $this -> model -> get1() ){
+            $row['error'] = "Помилка зєднання з БД!";
+        }
+        
+        if ( $this -> model -> get( $cpage*$itemsperpage - $itemsperpage, $itemsperpage ) ){
+            $row1 = $this -> model -> get( $cpage*$itemsperpage - $itemsperpage, $itemsperpage );
         }  else {
             $row['error'] = "Помилка зєднання з БД!";
         }
+        
+            
+        
+        
+        $pagescount = ceil( $itemscount / $itemsperpage ); // к-ть сторінок
+        $stpage = $cpage - $pagedisprange; // визначаємо, з якого номера будемо виводити сторінки
+        if ( $stpage < 1 ) { 
+            $stpage = 1; 
+        } 
+        $endpage = $cpage + $pagedisprange; // номер до якого будемо виводити
+        if ( $endpage > $pagescount ) { 
+            $endpage = $pagescount; 
+        } 
+        
+        if ($cpage>1) {
+            // first
+            $pag[] =  '<a href="'.$this -> _site.'page/1"><<</a> ';
+            // prev
+            $pag[] =  '<a href="'.$this -> _site.'page/'.($cpage-1).'"><</a> ';
+        }
+        if ( $stpage > 1 ) $pag[] =  '... '; 
+        for ($i=$stpage;$i<=$endpage;$i++) {
+            if ($i==$cpage) {
+                $pag[] =  '<strong>'.$i.'</strong> ';
+            }else { 
+                $pag[] =  '<a href="'.$this -> _site.'page/'.$i.'">'.$i.'</a> ';
+            }
+        }
+        
+        if ($endpage<$pagescount) $pag[] =   '... '; 
+        if ($cpage<$pagescount) {
+            // next
+            $pag[] =  '<a href="'.$this -> _site.'page/'.($cpage+1).'">></a> ';
+            // last
+            $pag[] =  '<a href="'.$this -> _site.'page/'.$pagescount.'">>></a> ';
+            
+            
+        }   
+        $row = array ( 'row1' => $row1, 'pag' => $pag );
+        //викликаємо метод get() класу Model_guestbook, і передаємо 
+        //$row масив всіх записів з БД
         //виводимо головну сторінку
         if ( isset( $_SESSION['email'] ) && !empty( $_SESSION['email'] )){
-            $main = parent :: LAYOUT.'user_main.tpl';
-            $mitteln = parent :: GUESTBOOK."user_list.tpl";
+            $main = parent :: $this -> _layout .'user_main.tpl';
+            $mitteln = parent :: $this -> _guestbok ."user_list.tpl";
         }else{
-            $main = parent :: LAYOUT.'main.tpl';
-            $mitteln = parent :: GUESTBOOK."list.tpl";
+            $main = parent :: $this -> _layout .'main.tpl';
+            $mitteln = parent :: $this -> _guestbok ."list.tpl";
         }
         
         $this -> view -> actionIndex ($main, $mitteln, $row );
@@ -154,8 +208,8 @@ class Controller_guestbook extends Controller
         }  else {
         //викликаємо метод actionIndex() класу View
         //виводимо форму для редагування
-        $main = parent :: LAYOUT.'main.tpl';
-        $mitteln = parent :: GUESTBOOK.'form.tpl';
+        $main = parent :: $this -> _layout .'user_main.tpl';
+        $mitteln = parent :: $this -> _guestbok .'form.tpl';
         $this -> view -> actionIndex( $main, $mitteln, $row );
         }
     }
@@ -196,16 +250,16 @@ class Controller_guestbook extends Controller
         }
         //викликаємо метод actionIndex() класу View
         if ( isset( $_SESSION['email'] ) && !empty( $_SESSION['email'] )){
-            $main = parent :: LAYOUT.'user_main.tpl';
-            $mitteln = parent :: GUESTBOOK."user_view.tpl";
+            $main = parent :: $this -> _layout .'user_main.tpl';
+            $mitteln = parent :: $this -> _guestbok ."user_view.tpl";
         }else{
-            $main = parent :: LAYOUT.'main.tpl';
-            $mitteln = parent :: GUESTBOOK."view.tpl";
+            $main = parent :: $this -> _layout .'main.tpl';
+            $mitteln = parent :: $this -> _guestbok ."view.tpl";
         }
         $this -> view -> actionIndex( $main, $mitteln, $row );
     }
     
-    
+       
 }
 
 ?>

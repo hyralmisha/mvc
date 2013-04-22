@@ -4,7 +4,8 @@ class Controller_authorization extends Controller
 
 {
     
-/*********************************__construct()********************************/
+
+    
     
     public function __construct()
     {
@@ -14,7 +15,8 @@ class Controller_authorization extends Controller
         $this -> model = new Model_authorization();
     }
     
-/*********************************registration()********************************/
+
+    
     
     public function registration()
     {
@@ -27,6 +29,19 @@ class Controller_authorization extends Controller
         //перевіряємо, чи був викликаний метод POST
         if ( $_SERVER['REQUEST_METHOD'] == 'POST' ){
             
+            //перевіряємо чи дійсний email
+            if (!preg_match('/^[a-zA-Z0-9][a-zA-Z0-9\._\-&!?=#]*@/', $_POST['email'])) {
+            $row['error'] = "Ваш email не дійсний!!! Введіть інший email!";
+            $_POST['email'] = "";
+        } else {
+            $domain = preg_replace('/^[a-zA-Z0-9][a-zA-Z0-9\._\-&!?=#]*@/', '', $_POST['email']);
+            if (!checkdnsrr($domain)) {
+                $row['error'] = "Ваш email не дійсний!!! Введіть інший email!";
+                $_POST['email'] = "";
+            }
+        }
+
+
             //перевіряємо чи існують введені у форму значення, і чи вони не порожні
             if ( isset( $_POST['last_name'] ) && !empty( $_POST['last_name'] ) &&
                  isset( $_POST['first_name'] ) && !empty( $_POST['first_name'] ) &&
@@ -77,13 +92,14 @@ class Controller_authorization extends Controller
         //вказуємо яким методом буде оброблятися форма
         $row['action']='registration';
         
-        $main = parent :: LAYOUT.'main.tpl';
-        $mitteln = parent :: AUTHORIZATION."registration.tpl";
+        $main = parent :: $this -> _layout .'main.tpl';
+        $mitteln = parent :: $this -> _authorization."registration.tpl";
         //викликаємо метод actionIndex() класу View
         $this-> view-> actionIndex( $main, $mitteln, $row );
     }
     
-/******************************confirmation( $email )**************************/
+
+    
     
     public function confirmation( $email )
     {
@@ -107,18 +123,19 @@ class Controller_authorization extends Controller
             
             //повідомлення про підтвердження, яке виведеться у вікні браузера
             $row['message'] = $message;
-            $mitteln = parent :: AUTHORIZATION.'message.tpl';
+            $mitteln = parent :: $this -> _authorization.'message.tpl';
                     
         }  else {
             $row['error'] = "Помилка зєднання з БД!";
-            $mitteln = parent :: AUTHORIZATION.'error.tpl';
+            $mitteln = parent :: $this -> _authorization.'error.tpl';
         }
-        $main = parent :: LAYOUT.'main.tpl';
+        $main = parent :: $this -> _layout .'main.tpl';
         $this -> view -> actionIndex( $main, $mitteln, $row );
     }
   
     
-/*********************************authorization ()******************************/    
+
+    
     
     public function authorization ()
     {
@@ -141,7 +158,10 @@ class Controller_authorization extends Controller
                     if ($row>0 && $row['password'] == md5( trim( $_POST['password'] ) ) ) {
                         $_SESSION['email'] = $email;
                         
-                        if ( !$this -> model -> dateEnter( $email ) ){
+                        if ( $this -> model -> dateEnter( $email ) ){
+                            $row['message'] = "Вітаємо, ".$row['first_name'].
+                                              ", ви увійшли на сайт!";
+                        }  else {
                             $row['error'] = "Помилка зєднання з БД!";
                         }
                     }else{
@@ -156,17 +176,18 @@ class Controller_authorization extends Controller
         }
         
         if ( isset( $_SESSION['email'] ) && !empty( $_SESSION['email'] )){
-            $main = parent :: LAYOUT.'user_main.tpl';
-            $mitteln = parent :: AUTHORIZATION."confirmation_auth.tpl";
+            $main = parent :: $this -> _layout .'user_main.tpl';
+            $mitteln = parent :: $this -> _authorization."message.tpl";
         }else{
-            $main = parent :: LAYOUT.'main.tpl';
-            $mitteln = parent :: AUTHORIZATION.'authorization.tpl';
+            $main = parent :: $this -> _layout .'main.tpl';
+            $mitteln = parent :: $this -> _authorization.'authorization.tpl';
         }
         $this -> view -> actionIndex( $main, $mitteln, $row );
     }
     
 
-/*********************************out()*****************************************/    
+
+    
     
     public function out()
     {
@@ -183,7 +204,8 @@ class Controller_authorization extends Controller
     }
     
     
-/*************************generateCode( $length = 6 )**************************/
+
+    
     
     protected function generateCode( $length = 6 )
     {
@@ -202,7 +224,8 @@ class Controller_authorization extends Controller
     }
 
     
-/*********************************passRecovery()********************************/
+
+    
     
     public function passRecovery()
     {
@@ -238,8 +261,8 @@ class Controller_authorization extends Controller
                         $row['message'] = "На Ваш email ".$to.
                                           "відправлено листа! Щоб відновити 
                                           пароль, слідуйте інструкціям у листі!";
-                        $main = parent :: LAYOUT.'main.tpl';
-                        $mitteln = parent :: AUTHORIZATION.'message.tpl';
+                        $main = parent :: $this -> _layout .'main.tpl';
+                        $mitteln = parent :: $this -> _authorization.'message.tpl';
                         $this -> view -> actionIndex( $main, $mitteln, $row );
                         exit();
                     }else {
@@ -252,13 +275,14 @@ class Controller_authorization extends Controller
                 $row['error'] = "Введіть email!";
             }
         }
-        $main = parent :: LAYOUT.'main.tpl';
-        $mitteln = parent :: AUTHORIZATION.'pass_recovery.tpl';
+        $main = parent :: $this -> _layout .'main.tpl';
+        $mitteln = parent :: $this -> _authorization.'pass_recovery.tpl';
         $this -> view -> actionIndex( $main, $mitteln, $row );
     }
     
     
-/*********************************passForm()************************************/
+
+    
     
     public function passForm()
     {
@@ -275,9 +299,9 @@ class Controller_authorization extends Controller
                 $dateCheck = time(); 
                 $dateChange = $row['date_change'];
                 if ($row > 0 && $dateCheck - $dateChange < 86400 ){
-                    $mitteln = parent :: AUTHORIZATION."pass_form.tpl";
+                    $mitteln = parent :: $this -> _authorization."pass_form.tpl";
                 }else {
-                    $mitteln = parent :: AUTHORIZATION."error.tpl";
+                    $mitteln = parent :: $this -> _authorization."error.tpl";
                     $row['error'] = "Дане посилання неактуальне! 
                                     Спробуйте отримати інше посилання!";
                 }   
@@ -285,14 +309,15 @@ class Controller_authorization extends Controller
                 $row['error'] = "Помилка зєднання з БД!";
             }
         }else {
-            $mitteln = parent :: AUTHORIZATION."error.tpl";
+            $mitteln = parent :: $this -> _authorization."error.tpl";
         }
-        $main = parent :: LAYOUT.'main.tpl';
+        $main = parent :: $this -> _layout .'main.tpl';
         $this -> view -> actionIndex( $main, $mitteln, $row );
     }
      
     
-/*********************************passChange()********************************/
+
+    
     
     public function passChange()
     {
@@ -314,8 +339,8 @@ class Controller_authorization extends Controller
                     
                     if ( $this -> model -> passChange( $email, $password ) ) {
                         $row['message'] = "Ви успішно відновили пароль!";
-                        $main = parent :: LAYOUT.'main.tpl';
-                        $mitteln = parent :: AUTHORIZATION."message.tpl";
+                        $main = parent :: $this -> _layout .'main.tpl';
+                        $mitteln = parent :: $this -> _authorization."message.tpl";
 
                         $this -> view -> actionIndex( $main, $mitteln, $row );
                     }  else {
@@ -328,8 +353,8 @@ class Controller_authorization extends Controller
                 $row['error'] = "Заповніть форму!";
             }
         }
-        $mitteln = parent :: AUTHORIZATION."pass_form.tpl";
-        $main = parent :: LAYOUT.'main.tpl';
+        $mitteln = parent :: $this -> _authorization."pass_form.tpl";
+        $main = parent :: $this -> _layout .'main.tpl';
         $this -> view -> actionIndex( $main, $mitteln, $row );
     }
     
