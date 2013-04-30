@@ -1,1 +1,1 @@
-<?php echo $param['message']; ?> 
+<h2><?php echo $param['message']; ?></h2> 

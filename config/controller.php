@@ -6,7 +6,7 @@ class Controller
     
     protected $_guestbok = 'views/guestbook/';//шлях до view-файлів
     protected $_layout = 'views/layout/';//шлях до layout-файлів
-    protected  $_authorization = 'views/authorization/';
+    protected  $_authorization = 'views/authorization/'; //шлях до view-файлів
 
     
     /**

@@ -16,7 +16,5 @@
 
 <?php    
     } 
-    foreach ( $param['pag'] as $list ) {
-        echo $list."&nbsp;";
-    }
+    
 ?>

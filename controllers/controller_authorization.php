@@ -26,20 +26,7 @@ class Controller_authorization extends Controller
         * 
         */
         
-        //перевіряємо, чи був викликаний метод POST
-        if ( $_SERVER['REQUEST_METHOD'] == 'POST' ){
-            
-            //перевіряємо чи дійсний email
-            if (!preg_match('/^[a-zA-Z0-9][a-zA-Z0-9\._\-&!?=#]*@/', $_POST['email'])) {
-            $row['error'] = "Ваш email не дійсний!!! Введіть інший email!";
-            $_POST['email'] = "";
-        } else {
-            $domain = preg_replace('/^[a-zA-Z0-9][a-zA-Z0-9\._\-&!?=#]*@/', '', $_POST['email']);
-            if (!checkdnsrr($domain)) {
-                $row['error'] = "Ваш email не дійсний!!! Введіть інший email!";
-                $_POST['email'] = "";
-            }
-        }
+        
 
 
             //перевіряємо чи існують введені у форму значення, і чи вони не порожні
@@ -48,6 +35,22 @@ class Controller_authorization extends Controller
                  isset( $_POST['email'] ) && !empty( $_POST['email'] ) &&
                  isset( $_POST['password'] ) && !empty( $_POST['password'] ) &&
                  isset( $_POST['password_control'] ) && !empty( $_POST['password_control'] ) ) {
+                
+                
+                //перевіряємо, чи був викликаний метод POST
+                if ( $_SERVER['REQUEST_METHOD'] == 'POST' ){
+
+                    //перевіряємо чи дійсний email
+                    if (!preg_match('/^[a-zA-Z0-9][a-zA-Z0-9\._\-&!?=#]*@/', $_POST['email'])) {
+                    $row['error'] = "Ваш email не дійсний!!! Введіть інший email!";
+                    $_POST['email'] = "";
+                } else {
+                    $domain = preg_replace('/^[a-zA-Z0-9][a-zA-Z0-9\._\-&!?=#]*@/', '', $_POST['email']);
+                    if (!checkdnsrr($domain)) {
+                        $row['error'] = "Ваш email не дійсний!!! Введіть інший email!";
+                        $_POST['email'] = "";
+                    }
+                }
                 
                 //перевіряємо, чи співпадають паролі
                 if ( $_POST['password_control'] == $_POST['password'] ) {
@@ -97,8 +100,6 @@ class Controller_authorization extends Controller
         //викликаємо метод actionIndex() класу View
         $this-> view-> actionIndex( $main, $mitteln, $row );
     }
-    
-
     
     
     public function confirmation( $email )
@@ -159,7 +160,7 @@ class Controller_authorization extends Controller
                         $_SESSION['email'] = $email;
                         
                         if ( $this -> model -> dateEnter( $email ) ){
-                            $row['message'] = "Вітаємо, ".$row['first_name'].
+                            $row['message'] = "Вітаємо! ".$row['first_name'].
                                               ", ви увійшли на сайт!";
                         }  else {
                             $row['error'] = "Помилка зєднання з БД!";

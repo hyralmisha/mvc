@@ -8,5 +8,5 @@
     <input type="text" name="password_control" value=""/><br />
     <input type="hidden" name="email" value="<?php echo $param['email']; ?>"/><br />
     <br />
-    <input type="submit" value="Змінити пароль" />
+    <input type="submit" value="Відновити пароль" />
 </form>

@@ -1,7 +1,8 @@
-<!--
-Форма для додавання нових записів
--->
-<?php echo $param['error']; ?> 
+
+<?php 
+echo $param['error']; 
+echo "<h1>".$param['header']."</h1>"; 
+?> 
 
 <form action="/mvc/guestbook/<?php echo $param['action']; ?>" method="post">
     <input type="hidden" name="edit" value="<?php echo $param['id']; ?>"/><br />

@@ -101,9 +101,7 @@ class Model_guestbook extends Model
     public function get( $cpage, $itemsperpage ) 
     {
        /**
-        * повертає інформацію про всі записи у БД
-        * 
-        * @return $result --- інформація про всі записи у БД
+        * повертає записи з БД в кількості $itemsperpage, починаючи з $cpage
         */
         
         $this -> _query = "SELECT * FROM gbook_msg 
@@ -143,6 +141,9 @@ class Model_guestbook extends Model
     
     public function get1() 
     {
+        /**
+        * повертає кількість записів у БД
+        */
         $this -> _query = "SELECT * FROM gbook_msg ;";
         
         
@@ -176,6 +177,53 @@ class Model_guestbook extends Model
     
         return $result;
     }
+    
+    public function search($searchPhrase)
+    {
+        /**
+        * повертає записи, які відповідають умовам пошуку
+        * 
+        * @param $searchPhrase --- фраза, за якою здійснюється пошук
+        * 
+        * @return $result --- масив записів, які відповідають пошуку
+        */
+        
+        $this -> _query = "SELECT *
+                                FROM gbook_msg
+                                WHERE MATCH (
+                                name, msg_short, msg_full
+                                )
+                                AGAINST (
+                                '$searchPhrase*' IN BOOLEAN MODE
+                                )";
+        $result = mysqli_query( $this -> _db, $this -> _query);
+        
+        if ( isset( $result ) && !empty( $result ) ){
+        
+            while ( $row = mysqli_fetch_array( $result ) ) {
+                $list['id'] = $row['id'];
+                $list['date_create'] = $row['date_create'];
+                $list['date_edit'] = $row['date_edit'];
+                $list['name'] = $row['name'];
+                $list['msg_short'] = $row['msg_short'];
+                $list['msg_full'] = $row['msg_full'];
+
+                if( $row['date_create'] == $row['date_edit'] ) {
+                    $list['date'] = "Дата створення: ".$row['date_create']."<br/>";
+                }else{
+                    $list['date'] = "Дата створення: ".$row['date_create']."<br/>
+                                     Дата редагування: ".$row['date_edit'];    
+                }
+
+                $listAll[] = $list;
+            }
+        
+            return $listAll;
+        }  else {
+            return $result;
+        }
+    }
+    
 }
 
 ?>

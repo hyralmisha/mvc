@@ -20,7 +20,7 @@ class Route
                 $id="";
 		
                 /*
-                 * отримуэмо масив із рядку URL
+                 * отримуэмо масив із рядка URL
                  */
                 $routes = explode('/', $_SERVER['REQUEST_URI']);
 
@@ -59,23 +59,7 @@ class Route
 		$model_name = 'Model_'.$controller_name;
 		$controller_name = 'Controller_'.$controller_name;
 				
-		/*
-                 * чіпляємо файл з класом моделі (файлу може і не бути)
-                 */ 
-                $model_file = strtolower( $model_name ).'.php';
-		$model_path = "models/".$model_file;
-		if( file_exists( $model_path ) ) {
-                    include "models/".$model_file;
-		}
-
-		/*
-                 * чіпляємо файл з класом контроллера
-                 */
-		$controller_file = strtolower( $controller_name ).'.php';
-		$controller_path = "controllers/".$controller_file;
-		if( file_exists( $controller_path ) ) {
-                    include "controllers/".$controller_file;
-		} 
+		
 				
 		/*
                  * створюэмо контроллер
