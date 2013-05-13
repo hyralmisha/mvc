@@ -8,5 +8,7 @@ $_autoload = array(
     'Model' => 'config/model.php',
     'View' => 'config/view.php',
     'Controller' => 'config/controller.php',
-    'Route' => 'config/route.php');
+    'Route' => 'config/route.php',
+    'Controller_tags' => 'controllers/controller_tags.php',
+    'Model_tags' => 'models/model_tags.php');
 ?>

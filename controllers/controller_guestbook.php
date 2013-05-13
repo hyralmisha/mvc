@@ -97,6 +97,7 @@ class Controller_guestbook extends Controller
                 $name = stripslashes( trim( htmlspecialchars( $_POST['name'] ) ) );
                 $msgShort = stripslashes( trim( htmlspecialchars( $_POST['msgShort'] ) ) );
                 $msgFull = stripslashes( trim( htmlspecialchars( $_POST['msgFull'] ) ) );
+                $tags = stripslashes( trim( htmlspecialchars( $_POST['tags'] ) ) );
             }else{
                 $row['error'] = "Будь ласка заповніть всі поля!<br/>";
             }    
@@ -104,7 +105,9 @@ class Controller_guestbook extends Controller
             //викликаємо метод add() класу Model_guestbook і передаємо 
             //йому введені у форму дані
             if ( empty( $row['error'] ) && 
-                 $this -> model -> add( $name, $msgShort, $msgFull ) ) {
+                $this -> model -> add( $name, $msgShort, $msgFull ) ) {
+                $tags = explode(',', $tags);
+                $this -> model -> addTags( $tags );
                 //переходимо на головну сторінку    
                 $this -> main();
                 exit();
@@ -304,7 +307,6 @@ class Controller_guestbook extends Controller
         }
         $this -> view -> actionIndex( $main, $mitteln, $row );
     }
-    
        
 }
 

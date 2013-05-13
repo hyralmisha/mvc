@@ -4,6 +4,55 @@ class Model_guestbook extends Model
 
 {
     
+    public function addTags( $tags )
+    {
+       /**
+        * записує до БД нові теги
+        * 
+        * @param array $tags --- масив тегів, які ввів користувач
+        * 
+        */
+        
+        
+        //витягаємо id останнього запису
+        $this -> _query = "SELECT id FROM gbook_msg ORDER BY id DESC LIMIT 1";
+        $postId = mysqli_fetch_array( mysqli_query( $this -> _db, $this -> _query) );
+        
+        foreach ( $tags as $tag ) {
+            
+            $tag = trim( $tag );
+            
+            $this -> _query = "SELECT * FROM tags WHERE name = '$tag'";
+            $row = mysqli_fetch_array( mysqli_query( $this -> _db, $this -> _query) );
+            
+            if ( $row ) {
+                $this -> _query = "INSERT INTO post_tags ( post_id, tags_id )
+                                          VALUES ('".$postId['id']."','".$row['id']."')";
+                mysqli_query( $this -> _db, $this -> _query);
+                
+                $this -> _query = "UPDATE tags 
+                                          SET count = count + 1
+                                          WHERE name = '$tag'";
+                mysqli_query( $this -> _db, $this -> _query);
+                
+            } else {
+                $this -> _query = "INSERT INTO tags ( name, count )
+                                          VALUES ('".$tag."','1')";
+                mysqli_query( $this -> _db, $this -> _query);
+                $this -> _query = "SELECT id FROM tags ORDER BY id DESC LIMIT 1";
+                $tagsId = mysqli_fetch_array( mysqli_query( $this -> _db, $this -> _query) );
+                
+
+                $this -> _query = "INSERT INTO post_tags ( post_id, tags_id )
+                                          VALUES ('".$postId['id']."','".$tagsId['id']."')";
+                mysqli_query( $this -> _db, $this -> _query);
+            }
+        }
+        
+    }
+    
+    
+    
     public function add( $name, $msgShort, $msgFull )
     {
        /**
@@ -144,11 +193,20 @@ class Model_guestbook extends Model
         /**
         * повертає кількість записів у БД
         */
-        $this -> _query = "SELECT * FROM gbook_msg ;";
         
         
+        
+        $this -> _query = "SELECT * FROM gbook_msg 
+                                ORDER BY id DESC;";
         $result = mysqli_query( $this -> _db, $this -> _query);
-        if ( isset( $result ) && !empty( $result ) ){
+        //$numRows = mysql_num_rows ($result);
+        //$result = mysqli_query( $this -> _db, "SELECT FOUND_ROWS()");
+        
+        $numRows = mysqli_num_rows($result);
+        return $numRows;
+        
+        
+        /*if ( isset( $result ) && !empty( $result ) ){
             $i = 0;
             while ( $row = mysqli_fetch_array( $result ) ) {
             $i++;
@@ -156,7 +214,7 @@ class Model_guestbook extends Model
             return $i;
         }  else {
             return $result;
-        }
+        }*/
     }
     
     public function view( $view )

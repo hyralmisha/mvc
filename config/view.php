@@ -10,6 +10,11 @@ class View
     
     }
     
+    public function tags() 
+    {
+        
+    }
+
     public function actionIndex($main,$mitteln, $param="")
     {
         /**
@@ -18,6 +23,9 @@ class View
          * @param file $main --- ім'я і шлях файла основного шаблону
          * @param file $mitteln --- ім'я і шлях файла сторінки
          */
+        
+        $getTags = new Controller_tags();
+        $tags = $getTags -> getTags();
         
         ob_start(); 
         ob_start();

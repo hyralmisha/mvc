@@ -33,6 +33,17 @@
         echo $mitteln;
     ?>
 </p>
+    <br/><br/><br/><h1 align="center">Теги!!!</h1>
+    <hr align = "left" width="95%" />
+    <div align="center">
+    <?php
+        foreach ( $tags as $tag ) {
+            echo "<font size = \"".$tag['countFont'].
+            " \"><a href = \"/mvc/tags/listTag/".$tag['id'].
+            "\">".$tag['name']."</a>&nbsp;</font>";
+        }
+    ?>
+    </div>
 </div>
 <div id="kotakkiri"></div>
 

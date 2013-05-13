@@ -10,6 +10,5 @@ function __autoload($class) {
     } 
 }
 
-
 Route::start(); // запускаем маршрутизатор
 ?>
